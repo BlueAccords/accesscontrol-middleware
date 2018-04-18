@@ -86,7 +86,7 @@ describe('## Admin permission check ', () => {
   })
   
   
-  it('## admin can view his own video', () => {
+  it('## admin can view his own video', (done) => {
     const request = {
       user : {
         role : 'admin',
@@ -108,7 +108,10 @@ describe('## Admin permission check ', () => {
       operands : [{ source : 'user', key : '_id' }, { source : 'params', key : 'userId' }]
     })(req, res, next);
     
-    expect(next.calledOnce).to.be.equal(true);
+    setTimeout(() => {
+      expect(next.calledOnce).to.be.equal(true);
+      done();
+    }, 100)
   })
   
   
@@ -128,7 +131,7 @@ describe('## Admin permission check ', () => {
     expect(next.calledOnce).to.be.equal(true);
   })
   
-  it('## admin can create his own video', () => {
+  it('## admin can create his own video', (done) => {
     const request = {
       user : {
         role : 'admin',
@@ -150,7 +153,10 @@ describe('## Admin permission check ', () => {
       operands : [{ source : 'user', key : '_id' }, { source : 'params', key : 'userId' }]
     })(req, res, next);
     
-    expect(next.calledOnce).to.be.equal(true);
+    setTimeout(() => {
+      expect(next.calledOnce).to.be.equal(true);
+      done();
+    }, 100)
   })
   
   
@@ -170,7 +176,7 @@ describe('## Admin permission check ', () => {
     expect(next.calledOnce).to.be.equal(true);
   })
   
-  it('## admin can update his own video', () => {
+  it('## admin can update his own video', (done) => {
     const request = {
       user : {
         role : 'admin',
@@ -192,7 +198,10 @@ describe('## Admin permission check ', () => {
       operands : [{ source : 'user', key : '_id' }, { source : 'params', key : 'userId' }]
     })(req, res, next);
     
-    expect(next.calledOnce).to.be.equal(true);
+    setTimeout(() => {
+      expect(next.calledOnce).to.be.equal(true);
+      done();
+    }, 100)
   })
   
   
@@ -213,7 +222,7 @@ describe('## Admin permission check ', () => {
     expect(next.calledOnce).to.be.equal(true);
   })
   
-  it('## admin can update his own video', () => {
+  it('## admin can update his own video', (done) => {
     const request = {
       user : {
         role : 'admin',
@@ -235,12 +244,15 @@ describe('## Admin permission check ', () => {
       operands : [{ source : 'user', key : '_id' }, { source : 'params', key : 'userId' }]
     })(req, res, next);
     
-    expect(next.calledOnce).to.be.equal(true);
+    setTimeout(() => {
+      expect(next.calledOnce).to.be.equal(true);
+      done();
+    }, 100)
   })
   
 });
 
-describe.only('## User permission check ', () => {
+describe('## User permission check ', () => {
   
   it('## user cannot view any video', () => {
     const request = {
@@ -259,7 +271,7 @@ describe.only('## User permission check ', () => {
   })
   
   
-  it('## user can view his own video', () => {
+  it('## user can view his own video', (done) => {
     const request = {
       user : {
         role : 'user',
@@ -281,7 +293,11 @@ describe.only('## User permission check ', () => {
       operands : [{ source : 'user', key : '_id' }, { source : 'params', key : 'userId' }]
     })(req, res, next);
     
-    expect(next.calledOnce).to.be.equal(true);
+    
+    setTimeout(() => {
+      expect(next.calledOnce).to.be.equal(true);
+      done();
+    }, 100)
   })
   
   
@@ -301,7 +317,7 @@ describe.only('## User permission check ', () => {
     expect(next.calledOnce).to.be.equal(false);
   })
   
-  it('## user can create his own video', () => {
+  it('## user can create his own video', (done) => {
     const request = {
       user : {
         role : 'admin',
@@ -323,7 +339,10 @@ describe.only('## User permission check ', () => {
       operands : [{ source : 'user', key : '_id' }, { source : 'params', key : 'userId' }]
     })(req, res, next);
     
-    expect(next.calledOnce).to.be.equal(true);
+    setTimeout(() => {
+      expect(next.calledOnce).to.be.equal(true);
+      done();
+    }, 100)
   })
   
   
@@ -343,7 +362,7 @@ describe.only('## User permission check ', () => {
     expect(next.calledOnce).to.be.equal(false);
   })
   
-  it('## user can update his own video', () => {
+  it('## user can update his own video', (done) => {
     const request = {
       user : {
         role : 'user',
@@ -365,7 +384,10 @@ describe.only('## User permission check ', () => {
       operands : [{ source : 'user', key : '_id' }, { source : 'params', key : 'userId' }]
     })(req, res, next);
     
-    expect(next.calledOnce).to.be.equal(true);
+    setTimeout(() => {
+      expect(next.calledOnce).to.be.equal(true);
+      done();
+    }, 100)
   })
   
   
@@ -386,7 +408,7 @@ describe.only('## User permission check ', () => {
     expect(next.calledOnce).to.be.equal(false);
   })
   
-  it('## user can update his own video', () => {
+  it('## user can update his own video', (done) => {
     const request = {
       user : {
         role : 'user',
@@ -408,14 +430,17 @@ describe.only('## User permission check ', () => {
       operands : [{ source : 'user', key : '_id' }, { source : 'params', key : 'userId' }]
     })(req, res, next);
     
-    expect(next.calledOnce).to.be.equal(true);
+    setTimeout(() => {
+      expect(next.calledOnce).to.be.equal(true);
+      done();
+    }, 100)
   })
   
 });
 
 describe('## comparison of operands', () => {
   
-  it('## should value of operands with different data type.', () => {
+  it('## should value of operands with different data type.', (done) => {
     const request = {
       user : {
         role: 'user',
@@ -437,54 +462,175 @@ describe('## comparison of operands', () => {
       operands : [{ source : 'user', key : '_id' }, { source : 'params', key : 'userId' }]
     })(req, res, next);
     
-    expect(next.calledOnce).to.be.equal(true);
+    setTimeout(() => {
+      expect(next.calledOnce).to.be.equal(true);
+      done();
+    }, 100)
   })
 })
 
 describe('## User Permission check WITH database model', () => {
   tracker.install();
   
-  before(() => {
-    // query should only return a single comment, owned by uesr with id of 1
-    tracker.on('query', (query) => {
-      const results = [
-        {
-          id: 1,
-          body: 'first comment',
-          author_id: 1
-        }
-      ];
-      query.response(results);
+  describe('### User WITH permission actions', () => {
+    
+    before(() => {
+      // query should only return a single comment, owned by uesr with id of 1
+      tracker.on('query', (query) => {
+        const results = [
+          {
+            id: 1,
+            body: 'first comment',
+            author_id: 1
+          }
+        ];
+        query.response(results);
+      });
     });
-  });
-
-  it('## user should be able to read their own video', () => {
-    const request = {
-      user : {
-        _id : 1,
-        role : 'user'
-      },
-      params : {
-        userId : '1'
-      }
-    };
     
-    const req = mockReq(request);
-    const res = mockRes();
-    const next = sinon.spy();
+    it('## user should be able to read their own video', (done) => {
+      const request = {
+        user : {
+          _id : 1,
+          role : 'user'
+        },
+        params : {
+          videoId : '1'
+        }
+      };
+      
+      const req = mockReq(request);
+      const res = mockRes();
+      const next = sinon.spy();
+      
+      middleware = accessControlMiddleware.check({ 
+        resource : 'video',
+        action: 'read',
+        checkOwnerShip : true,
+        useModel: true,
+        operands : [
+          { source : 'user', key : '_id' },
+          { source : 'params', key : 'videoId', modelName: 'video', modelKey: 'id', opKey: 'author_id' }]
+        })(req, res, next);
+        
+        setTimeout(()=> {
+          expect(next.calledOnce).to.be.equal(true);
+          done();
+        }, 200);
+      });
+    })
     
-    middleware = accessControlMiddleware.check({ 
-      resource : 'video',
-      action: 'read',
-      checkOwnerShip : true,
-      useModel: true,
-      operands : [
-        { source : 'user', key : '_id' },
-        { source : 'params', key : 'userId', modelName: 'video', modelKey: 'id', opKey: 'author_id' }]
-    })(req, res, next);
-    
-    expect(next.calledOnce).to.be.equal(true);
-  })
-})
+    describe('### User WITHOUT permission actions', () => {
+      before(() => {
+        // query should only return a single comment, owned by uesr with id of 1
+        tracker.on('query', (query) => {
+          const results = [
+            {
+              id: 2,
+              body: 'second comment',
+              author_id: 2
+            }
+          ];
+          query.response(results);
+        });
+      });
+      
+      it('## user should NOT be able to update OTHER videos', (done) => {
+        const request = {
+          user : {
+            _id : 1,
+            role : 'user'
+          },
+          params : {
+            videoId : '2'
+          }
+        };
+        
+        const req = mockReq(request);
+        const res = mockRes();
+        const next = sinon.spy();
+        
+        middleware = accessControlMiddleware.check({ 
+          resource : 'video',
+          action: 'update',
+          checkOwnerShip : true,
+          useModel: true,
+          operands : [
+            { source : 'user', key : '_id' },
+            { source : 'params', key : 'videoId', modelName: 'video', modelKey: 'id', opKey: 'author_id' }]
+          })(req, res, next);
+          
+          setTimeout(()=> {
+            expect(next.calledOnce).to.be.equal(false);
+            done();
+          }, 200);
+        });
+        
+        it('## user should NOT be able to delete OTHER videos', (done) => {
+          const request = {
+            user : {
+              _id : 1,
+              role : 'user'
+            },
+            params : {
+              videoId : '2'
+            }
+          };
+          
+          const req = mockReq(request);
+          const res = mockRes();
+          const next = sinon.spy();
+          
+          middleware = accessControlMiddleware.check({ 
+            resource : 'video',
+            action: 'delete',
+            checkOwnerShip : true,
+            useModel: true,
+            operands : [
+              { source : 'user', key : '_id' },
+              { source : 'params', key : 'videoId', modelName: 'video', modelKey: 'id', opKey: 'author_id' }]
+            })(req, res, next);
+            
+            setTimeout(()=> {
+              expect(next.calledOnce).to.be.equal(false);
+              done();
+            }, 200);
+          });
 
-
+        it('## user should NOT be able to read OTHER videos', (done) => {
+          const request = {
+            user : {
+              _id : 1,
+              role : 'user'
+            },
+            params : {
+              videoId : '2'
+            }
+          };
+          
+          const req = mockReq(request);
+          const res = mockRes();
+          const next = sinon.spy();
+          
+          middleware = accessControlMiddleware.check({ 
+            resource : 'video',
+            action: 'read',
+            checkOwnerShip : true,
+            useModel: true,
+            operands : [
+              { source : 'user', key : '_id' },
+              { source : 'params', key : 'videoId', modelName: 'video', modelKey: 'id', opKey: 'author_id' }]
+            })(req, res, next);
+            
+            setTimeout(()=> {
+              expect(next.calledOnce).to.be.equal(false);
+              done();
+            }, 200);
+          });
+        });
+        
+        
+      })
+      
+      
+      

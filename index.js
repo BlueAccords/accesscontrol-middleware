@@ -108,68 +108,6 @@ class AccessControlMiddleware {
           return res.status(403).send();
         } 
       }
-
-        /**
-
-        if(useModel) {
-          const modelName = operands[1].modelName;
-          const modelKey  = operands[1].modelKey;
-          const opKey = operands[1].opKey;
-          const modelValue = req[operands[1].source][operands[1].key];
-
-
-          this.getOperandByModel(modelName, opKey, modelKey, modelValue)
-            .then((operandResult) => {
-
-              secondOperand =  operandResult[opKey];
-              // ===============
-              if (firstOperand.toString() === secondOperand.toString()) {
-                permission = permission[actions.own](resource);
-              }
-              else {
-                permission = permission[actions.any](resource);
-              }
-              if (permission.granted) {
-                console.log('undefined===================');
-                console.log('next called?');
-                console.log('undefined===================');
-                return next();
-              } 
-              else {
-                return res.status(403).send();
-              } 
-              // ===============
-            })
-            .catch((err) => {
-              // TODO: better error handling here
-              console.log('err============================');
-              console.log(err);
-              console.log('entered');
-              res.status(500).send();
-            }) 
-        } else {
-          secondOperand = req[operands[1].source][operands[1].key];
-
-          if (firstOperand.toString() === secondOperand.toString()) {
-            permission = permission[actions.own](resource);
-          }
-          else {
-            permission = permission[actions.any](resource);
-          }
-        }
-      } // delete this single line later
-      // } else {
-      //   permission = permission[actions.any](resource);
-      // }
-
-      // if (permission.granted) {
-      //   return next();
-      // } 
-      // else {
-      //   return res.status(403).send();
-      // }
-
-      */
     };
   }
 

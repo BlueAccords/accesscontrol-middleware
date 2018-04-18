@@ -3,7 +3,7 @@ const mockKnex = require('mock-knex');
 
 const connection = knex({
   client: 'mysql2',
-  debug: true
+  debug: false
 });
 
 mockKnex.mock(connection);
