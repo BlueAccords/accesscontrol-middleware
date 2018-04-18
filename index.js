@@ -4,8 +4,13 @@ class AccessControlMiddleware {
    * @param {object} accessControl access control rules object.
    */
 
-  constructor(accessControl) {
+   /**
+    * @param {object} accessControl the accesscontrol library itself
+    * @param {object} dbDriver database driver, for this case i'm specifically using knex so it must be a knex connection.
+    */
+  constructor(accessControl, dbDriver) {
     this._accessControl = accessControl;
+    this._dbDriver = dbDriver;
   }
 
   /**
@@ -20,7 +25,7 @@ class AccessControlMiddleware {
    * @returns {function} middleware to append in express.js route.
    */
 
-  check ({ resource, action, checkOwnerShip = false, operands = []}) {
+  check ({ resource, action, checkOwnerShip = false, useModel = false, operands = []}) {
 
     return (req, res, next) => {
 
@@ -60,6 +65,8 @@ class AccessControlMiddleware {
 
       permission = this._accessControl.can(role);
 
+      
+
       if (checkOwnerShip) {
 
         if (operands.length !== 2) {
@@ -67,29 +74,136 @@ class AccessControlMiddleware {
         }
 
         const firstOperand = req[operands[0].source][operands[0].key];
+        let getSecondOpPromise;
 
-        const secondOperand = req[operands[1].source][operands[1].key];
-
-        if (firstOperand.toString() === secondOperand.toString()) {
-          permission = permission[actions.own](resource);
+        if(useModel) {
+          const modelName = operands[1].modelName;
+          const modelKey  = operands[1].modelKey;
+          const opKey = operands[1].opKey;
+          const modelValue = req[operands[1].source][operands[1].key];
+          getSecondOpPromise = this.getOperandByModel(modelName, opKey, modelKey, modelValue);
+        } else {
+          getSecondOpPromise = this.getOperandByReq(req, operands[1]);
         }
-        else {
-          permission = permission[actions.any](resource);
-        }
 
+        getSecondOpPromise
+        .then((secondOperand) => {
+          if (firstOperand.toString() === secondOperand.toString()) {
+            permission = permission[actions.own](resource);
+          } else {
+            permission = permission[actions.any](resource);
+          }
+
+          if (permission.granted) {
+            return next();
+          } else {
+            return res.status(403).send();
+          } 
+        })
       } else {
         permission = permission[actions.any](resource);
+        if (permission.granted) {
+          return next();
+        } else {
+          return res.status(403).send();
+        } 
       }
 
-      if (permission.granted) {
-        return next();
-      } 
-      else {
-        return res.status(403).send();
-      }
+        /**
+
+        if(useModel) {
+          const modelName = operands[1].modelName;
+          const modelKey  = operands[1].modelKey;
+          const opKey = operands[1].opKey;
+          const modelValue = req[operands[1].source][operands[1].key];
+
+
+          this.getOperandByModel(modelName, opKey, modelKey, modelValue)
+            .then((operandResult) => {
+
+              secondOperand =  operandResult[opKey];
+              // ===============
+              if (firstOperand.toString() === secondOperand.toString()) {
+                permission = permission[actions.own](resource);
+              }
+              else {
+                permission = permission[actions.any](resource);
+              }
+              if (permission.granted) {
+                console.log('undefined===================');
+                console.log('next called?');
+                console.log('undefined===================');
+                return next();
+              } 
+              else {
+                return res.status(403).send();
+              } 
+              // ===============
+            })
+            .catch((err) => {
+              // TODO: better error handling here
+              console.log('err============================');
+              console.log(err);
+              console.log('entered');
+              res.status(500).send();
+            }) 
+        } else {
+          secondOperand = req[operands[1].source][operands[1].key];
+
+          if (firstOperand.toString() === secondOperand.toString()) {
+            permission = permission[actions.own](resource);
+          }
+          else {
+            permission = permission[actions.any](resource);
+          }
+        }
+      } // delete this single line later
+      // } else {
+      //   permission = permission[actions.any](resource);
+      // }
+
+      // if (permission.granted) {
+      //   return next();
+      // } 
+      // else {
+      //   return res.status(403).send();
+      // }
+
+      */
     };
   }
 
+
+  getOperandByReq(req, operand) {
+    return new Promise((resolve, reject) => {
+       resolve(req[operand.source][operand.key]);
+    })
+  }
+
+  /**
+   * makes a database calling using the given model name, key name, and model id to obtain
+   * the 2nd operand.
+   * @param {string} modelName database model name, used for the database query
+   * @param {string} opKey operand key, typically the equivalent of user_id in the given model
+   * @param {string} modelKey model unique key, used to get the specific row which contains the operand value we want
+   * @param {string} modelValue value used in the query to compare against the provided modelKey column
+   * @returns {promise} returns a promise with the results
+   */
+  getOperandByModel(modelName, opKey, modelKey, modelValue) {
+    return new Promise((resolve, reject) => {
+      this._dbDriver
+        .select(modelKey, opKey)
+        .from(modelName) 
+        .where(modelKey, modelValue)
+        .first()
+        .then((foundObj) => {
+          resolve(foundObj[opKey]);
+        })
+        .catch((err) => {
+          reject(err);
+        })
+    })
+  }
 }
 
 module.exports = AccessControlMiddleware;
