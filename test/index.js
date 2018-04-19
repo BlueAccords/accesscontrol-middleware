@@ -4,6 +4,7 @@ const expect = chai.expect;
 const sinon = require('sinon');
 const mockReq =  require('sinon-express-mock').mockReq;
 const mockRes =  require('sinon-express-mock').mockRes;
+const Boom = require('boom');
 
 // db mock
 const mockKnex = require('mock-knex');
@@ -267,7 +268,8 @@ describe('## User permission check ', () => {
     
     middleware = accessControlMiddleware.check({ resource : 'video', action: 'read' })(req, res, next);
     
-    expect(next.calledOnce).to.be.equal(false);
+    expect(next.calledOnce).to.be.equal(true);
+    expect(Boom.isBoom(next.args[0][0])).to.be.equal(true);
   })
   
   
@@ -314,7 +316,8 @@ describe('## User permission check ', () => {
     
     middleware = accessControlMiddleware.check({ resource : 'video', action: 'create' })(req, res, next);
     
-    expect(next.calledOnce).to.be.equal(false);
+    expect(next.calledOnce).to.be.equal(true);
+    expect(Boom.isBoom(next.args[0][0])).to.be.equal(true);
   })
   
   it('## user can create his own video', (done) => {
@@ -359,7 +362,8 @@ describe('## User permission check ', () => {
     
     middleware = accessControlMiddleware.check({ resource : 'video', action: 'update' })(req, res, next);
     
-    expect(next.calledOnce).to.be.equal(false);
+    expect(next.calledOnce).to.be.equal(true);
+    expect(Boom.isBoom(next.args[0][0])).to.be.equal(true);
   })
   
   it('## user can update his own video', (done) => {
@@ -405,7 +409,8 @@ describe('## User permission check ', () => {
     
     middleware = accessControlMiddleware.check({ resource : 'video', action: 'delete' })(req, res, next);
     
-    expect(next.calledOnce).to.be.equal(false);
+    expect(next.calledOnce).to.be.equal(true);
+    expect(Boom.isBoom(next.args[0][0])).to.be.equal(true);
   })
   
   it('## user can update his own video', (done) => {
@@ -518,7 +523,7 @@ describe('## User Permission check WITH database model', () => {
           done();
         }, 200);
       });
-    })
+    });
     
     describe('### User WITHOUT permission actions', () => {
       before(() => {
@@ -561,7 +566,8 @@ describe('## User Permission check WITH database model', () => {
           })(req, res, next);
           
           setTimeout(()=> {
-            expect(next.calledOnce).to.be.equal(false);
+            expect(next.calledOnce).to.be.equal(true);
+            expect(Boom.isBoom(next.args[0][0])).to.be.equal(true);
             done();
           }, 200);
         });
@@ -592,7 +598,8 @@ describe('## User Permission check WITH database model', () => {
             })(req, res, next);
             
             setTimeout(()=> {
-              expect(next.calledOnce).to.be.equal(false);
+              expect(next.calledOnce).to.be.equal(true);
+              expect(Boom.isBoom(next.args[0][0])).to.be.equal(true);
               done();
             }, 200);
           });
@@ -623,13 +630,12 @@ describe('## User Permission check WITH database model', () => {
             })(req, res, next);
             
             setTimeout(()=> {
-              expect(next.calledOnce).to.be.equal(false);
+                expect(next.calledOnce).to.be.equal(true);
+                expect(Boom.isBoom(next.args[0][0])).to.be.equal(true);
               done();
             }, 200);
           });
         });
-        
-        
       })
       
       

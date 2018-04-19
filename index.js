@@ -1,3 +1,4 @@
+const Boom = require('boom');
 
 class AccessControlMiddleware {
   /**
@@ -29,6 +30,8 @@ class AccessControlMiddleware {
 
     return (req, res, next) => {
 
+
+
       const actions = {};
       
       switch (action) {
@@ -56,7 +59,14 @@ class AccessControlMiddleware {
         break;
   
         default:
-        return next(new Error('invalid action'));
+        return next(Boom.badRequest('Invalid Action'));
+      }
+
+      // May need to replace this authentication method with something else depending on your app
+      // this implementation assmes you are using passport to store users in req.user 
+      // and a user has a role field
+      if(!req.user) {
+        return next(Boom.forbidden('Access Denied, Not Logged In.'));
       }
 
       // as most passport strategy assign user object to req.
@@ -70,7 +80,7 @@ class AccessControlMiddleware {
       if (checkOwnerShip) {
 
         if (operands.length !== 2) {
-          return next(new Error('must be two operands to check ownership'))
+          return next(Boom.badRequest('Must contain two operands to check permissions'));
         }
 
         const firstOperand = req[operands[0].source][operands[0].key];
@@ -97,15 +107,22 @@ class AccessControlMiddleware {
           if (permission.granted) {
             return next();
           } else {
-            return res.status(403).send();
+            return next(Boom.forbidden('Access Denied'));
           } 
         })
+        .catch((err) => {
+          if(Boom.isBoom(err)) {
+            return next(err);
+          } else {
+            return next(Boom.badImplementation());
+          }
+        });
       } else {
         permission = permission[actions.any](resource);
         if (permission.granted) {
           return next();
         } else {
-          return res.status(403).send();
+          return next(Boom.forbidden('Access Denied'));
         } 
       }
     };
@@ -133,9 +150,12 @@ class AccessControlMiddleware {
         .select(modelKey, opKey)
         .from(modelName) 
         .where(modelKey, modelValue)
-        .first()
-        .then((foundObj) => {
-          resolve(foundObj[opKey]);
+        .then((rows) => {
+          if(rows.length > 0) {
+            resolve(rows[0][opKey]);
+          } else {
+            reject(Boom.notFound(`${modelName} with ${modelKey} ${modelValue} not found`));
+          }
         })
         .catch((err) => {
           reject(err);
