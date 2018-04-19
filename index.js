@@ -129,6 +129,11 @@ class AccessControlMiddleware {
   }
 
 
+  /**
+   * helper function to return the second operand value and return it via promise 
+   * @param {object} req request object from express
+   * @param {object} operand operand whose properties will be used to obtain a value from the req object
+   */
   getOperandByReq(req, operand) {
     return new Promise((resolve, reject) => {
        resolve(req[operand.source][operand.key]);
